@@ -1,25 +1,12 @@
-#include <SFML/Graphics.hpp>
-#include <iostream>
-#include <ctime>
-#include <ratio>
-#include <chrono>
-#include <string>
-#include <string.h>
-#include <unistd.h>
-
-using namespace std;
-using namespace chrono;
-
-#include "player/Player.cpp"
-
+#include "player/Player.h"
 
 int main(){
     sf::RenderWindow window;
-    sf::Vector2i centerWindow((sf::VideoMode::getDesktopMode().width / 2) - 445, (sf::VideoMode::getDesktopMode().height / 2) - 480);
- 
+    sf::Vector2i centerWindow((sf::VideoMode::getDesktopMode().width / 2) - 445, (sf::VideoMode::getDesktopMode().height / 2) - 350);
+
     window.create(sf::VideoMode(600, 400), "Joguinho!", sf::Style::Titlebar | sf::Style::Close);
     window.setPosition(centerWindow);
- 
+
     window.setKeyRepeatEnabled(true);
 
     /* view
@@ -53,7 +40,11 @@ int main(){
         else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
             player.moveLeft();
         }
-        
+        else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
+            player.moveUp();
+        }
+
+
 
         window.clear();
         window.setView(view);

@@ -1,14 +1,11 @@
+#include "includes.h"
+
+#include "engine/Listener.h"
 #include "player/Player.h"
+#include "engine/Engine.h"
 
 int main(){
     sf::RenderWindow window;
-    sf::Vector2i centerWindow((sf::VideoMode::getDesktopMode().width / 2) - 445, (sf::VideoMode::getDesktopMode().height / 2) - 350);
-
-    window.create(sf::VideoMode(600, 400), "Joguinho!", sf::Style::Titlebar | sf::Style::Close);
-    window.setPosition(centerWindow);
-
-    window.setKeyRepeatEnabled(true);
-
     /* view
         x1            x2
 
@@ -16,8 +13,11 @@ int main(){
     *///                        x1   y1     x2     y2
     sf::View view(sf::FloatRect(0.f, 300.f, 600.f, 500.f));
 
-    Player player;
-    player.setView(&view);
+
+    float ground = 700;
+
+    Engine engine(window,view);
+    Player player(view, ground);
 
     sf::Texture texture;
     if (!texture.loadFromFile("sprites/bg.png")){
@@ -27,33 +27,9 @@ int main(){
     sf::Sprite sprite;
     sprite.setTexture(texture);
 
-    while (window.isOpen()){
-        sf::Event event;
-        while (window.pollEvent(event)){
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
+    engine.addSprite(&sprite);
+    engine.addPlayer(&player);
 
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-            player.moveRight();
-        }
-        else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-            player.moveLeft();
-        }
-        else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
-            player.moveUp();
-        }
-
-
-
-        window.clear();
-        window.setView(view);
-
-        window.draw(sprite); // background vem antes
-
-        player.drawTo(window);
-        window.display();
-    }
-
+    engine.update();
     return 0;
 }

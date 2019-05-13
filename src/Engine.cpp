@@ -1,11 +1,12 @@
-#include "Engine.h"
+#include "Engine.hpp"
 
 Engine::Engine(sf::RenderWindow& _win,  sf::View& _view):
-    window(_win), view(_view){
+    window(_win), view(_view), world(NULL){
     sf::Vector2i centerWindow((sf::VideoMode::getDesktopMode().width / 2) - 445, (sf::VideoMode::getDesktopMode().height / 2) - 350);
     window.create(sf::VideoMode(600, 400), "Joguinho!", sf::Style::Titlebar | sf::Style::Close);
     window.setPosition(centerWindow);
     window.setKeyRepeatEnabled(true);
+    window.setFramerateLimit(60);
 }
 Engine::~Engine(){}
 
@@ -30,6 +31,9 @@ void Engine::update(){
         for(auto itr = sprites.begin(); itr != sprites.end(); ++itr){
             window.draw(*(*itr));
         }
+
+        world->draw(window);
+        world->gravity();
 
         for(auto itr = listeners.begin(); itr != listeners.end(); ++itr){
             (*itr)->onUpdate();

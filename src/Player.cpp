@@ -1,16 +1,19 @@
-#include "Player.h"
-#include "Listener.h"
-Player::Player(sf::View& _view, float ground, string _name):
+#include "Player.hpp"
+
+Player::Player(sf::View& _view, string _name):
         Listener(),
-        view(_view), groundHeight(ground), name(_name){
+        view(_view), name(_name){
 
     player.setSize({20,60});
     player.setFillColor(sf::Color::Blue);
-    setPos({50.0, ground});
-    moveSpeed = 0.1;
-    jumpHeight = 150;
-    maxVelocity = 15;
+    setPos({50.0, 600});
+    moveSpeed = 1.5;
+    jumpHeight = 75;
+    maxVelocityX = 0.001;
+    maxVelocityY = 100;
     isJumping = false;
+    finalJumpHeight=0;
+    world = NULL;
 }
 Player::~Player(){}
 
@@ -36,34 +39,31 @@ void Player::moveLeft(){
 }
 
 void Player::jump(){
-    if(isJumping) return;
-    isJumping = true;
-    for(float i = 0.0; i < jumpHeight; i += 0.1){
-        move({0,-0.01});
-        cout << "jump" << endl;
-    }
-    for(float i = 0.0; i < jumpHeight; i += 0.1){
-        move({0,0.01});
-        cout << "jump2" << endl;
-    }
-    isJumping = false;
+
+    acc.y -= 2.50;
+    move({0,-2.50});
+    isJumping=true;
+
 }
 
 void Player::onUpdate(){
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-        if(acc.x < maxVelocity)
+        if(acc.x < maxVelocityX)
             acc.x += 10;
-        if(acc.x > maxVelocity) acc.x = maxVelocity;
+        if(acc.x > maxVelocityX) acc.x = maxVelocityX;
     }
     else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-        if(acc.x > -maxVelocity)
+        if(acc.x > -maxVelocityX)
             acc.x -= 10;
-        if(acc.x < -maxVelocity) acc.x = -maxVelocity;
+        if(acc.x < -maxVelocityX) acc.x = -maxVelocityX;
     }
-    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
+    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && world->isColliding(player.getGlobalBounds()) == true){
         if(!isJumping){
-            acc.y += jumpHeight;
-            isJumping = true;
+            if(acc.y < maxVelocityY)
+                acc.y += jumpHeight;
+            if(acc.y > maxVelocityY) acc.y = maxVelocityY;
+            finalJumpHeight = (player.getPosition().y) - jumpHeight;
+
         }
     }
 
@@ -74,15 +74,29 @@ void Player::onUpdate(){
         acc.x += 1 * abs(acc.x*0.09);
         moveLeft();
     }
-
     if(acc.y > 0.001){
-        acc.y -= 0.09;
-        move({0,-0.09});
-    }else isJumping = false;
-    if(player.getPosition().y < groundHeight && isJumping == false){
-        move({0,0.09});
+        jump();
     }
+    cout<<player.getPosition().y<<','<<finalJumpHeight<<endl;
+    if(player.getPosition().y < finalJumpHeight + 5)
+        isJumping=false;
+    if(player.getPosition().y > 800)
+        respawn();
 }
+
+
 void Player::drawTo(sf::RenderWindow &window) {
     window.draw(player);
+}
+void Player::fall(){
+    if(!isJumping)
+        move({0,2.50});
+}
+
+sf::FloatRect Player::getRect(){
+    return player.getGlobalBounds();
+}
+void Player::respawn(){
+
+    setPos({50.0, 600});
 }

@@ -1,0 +1,1 @@
+Apenas é necessário que o executável do jogo se mantenha no diretório principal.

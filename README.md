@@ -1,4 +1,4 @@
-# Candlebright
+# Candlebright - Ominous Whip
 Candlebright was a game developed as college work.
 
 Candlebright is a rogue-like game based on Castlevania: Harmony of Dissonance and Dead Cells.
